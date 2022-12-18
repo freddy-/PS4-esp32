@@ -8,6 +8,9 @@ You can find that here: https://github.com/jvpernis/esp32-ps3
 
 This repo can be downloaded as a zip file and imported into the Arduino IDE as a library.
 
+## Requirements
+* IDF release/v4.0
+
 ## Installation
 The instructions on how to do this are base off what can be found [here](https://github.com/jvpernis/esp32-ps3/issues/3#issuecomment-517141523)
 1. You can add the ESP32 boards to your Arduino IDE by adding them to the Boards Manager:

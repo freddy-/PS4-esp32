@@ -71,8 +71,8 @@ uint16_t l2cap_interrupt_channel = 0;
 **
 *******************************************************************************/
 void ps4_l2cap_init_services() {
-    ps4_l2cap_init_service("PS4-HIDC", BT_PSM_HID_CONTROL, BTM_SEC_SERVICE_FIRST_EMPTY);
-    ps4_l2cap_init_service("PS4-HIDI", BT_PSM_HID_INTERRUPT, BTM_SEC_SERVICE_FIRST_EMPTY + 1);
+    ps4_l2cap_init_service("PS4-HIDC", HID_PSM_CONTROL, BTM_SEC_SERVICE_FIRST_EMPTY);
+    ps4_l2cap_init_service("PS4-HIDI", HID_PSM_INTERRUPT, BTM_SEC_SERVICE_FIRST_EMPTY + 1);
 }
 
 /*******************************************************************************
@@ -85,8 +85,8 @@ void ps4_l2cap_init_services() {
 **
 *******************************************************************************/
 void ps4_l2cap_deinit_services() {
-    ps4_l2cap_deinit_service("PS4-HIDC", BT_PSM_HID_CONTROL);
-    ps4_l2cap_deinit_service("PS4-HIDI", BT_PSM_HID_INTERRUPT);
+    ps4_l2cap_deinit_service("PS4-HIDC", HID_PSM_CONTROL);
+    ps4_l2cap_deinit_service("PS4-HIDI", HID_PSM_INTERRUPT);
 }
 
 
@@ -109,10 +109,10 @@ void ps4_l2cap_send_hid( hid_cmd_t *hid_cmd, uint8_t len ) {
         ESP_LOGE(PS4_TAG, "[%s] allocating buffer for sending the command failed", __func__);
     }
 
-    p_buf->length = len + ( sizeof(*hid_cmd) - sizeof(hid_cmd->data) );
+    p_buf->len = len + ( sizeof(*hid_cmd) - sizeof(hid_cmd->data) );
     p_buf->offset = L2CAP_MIN_OFFSET;
 
-    memcpy((uint8_t *)(p_buf + 1) + p_buf->offset, (uint8_t*)hid_cmd, p_buf->length);
+    memcpy((uint8_t *)(p_buf + 1) + p_buf->offset, (uint8_t*)hid_cmd, p_buf->len);
 
     if (l2cap_control_channel == 0) {
         ESP_LOGE(PS4_TAG, "[%s] l2cap_control_channel not initialized.", __func__);
@@ -198,9 +198,9 @@ static void ps4_l2cap_connect_ind_cback (BD_ADDR  bd_addr, uint16_t l2cap_cid, u
     /* Send a Configuration Request. */
     L2CA_CONFIG_REQ(l2cap_cid, &ps4_cfg_info);
 
-    if (psm == BT_PSM_HID_CONTROL) {
+    if (psm == HID_PSM_CONTROL) {
         l2cap_control_channel = l2cap_cid;
-    } else if (psm == BT_PSM_HID_INTERRUPT) {
+    } else if (psm == HID_PSM_INTERRUPT) {
         l2cap_interrupt_channel = l2cap_cid;
     }
 }
@@ -309,7 +309,7 @@ static void ps4_l2cap_disconnect_cfm_cback(uint16_t l2cap_cid, uint16_t result) 
 **
 *******************************************************************************/
 static void ps4_l2cap_data_ind_cback(uint16_t l2cap_cid, BT_HDR *p_buf) {
-    if (p_buf->length > 2) {
+    if (p_buf->len > 2) {
         parsePacket(p_buf->data);
     }
 

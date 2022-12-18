@@ -79,7 +79,7 @@ void ps4Enable() {
   memcpy(hidCommand.data, hid_cmd_payload_ps4_enable, length);
 
   ps4_l2cap_send_hid(&hidCommand, length);
-  ps4SetLed(32, 32, 200);
+  ps4SetLed(200, 0, 50);
 }
 
 /*******************************************************************************
